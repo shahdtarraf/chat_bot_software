@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from langchain_community.embeddings.huggingface import HuggingFaceInferenceAPIEmbeddings
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_groq import ChatGroq
 from langchain import hub
@@ -14,9 +14,10 @@ HF_TOKEN = os.getenv("HF_TOKEN")
 DB_FAISS_PATH = "vectorstore/db_faiss"
 
 # تحميل قاعدة البيانات
-embedding = HuggingFaceInferenceAPIEmbeddings(
-    api_key=HF_TOKEN,
-    model_name="sentence-transformers/all-MiniLM-L6-v2",
+embedding = HuggingFaceEndpointEmbeddings(
+    model="sentence-transformers/all-MiniLM-L6-v2",
+    task="feature-extraction",
+    huggingfacehub_api_token=HF_TOKEN,
 )
 db = FAISS.load_local(DB_FAISS_PATH, embedding, allow_dangerous_deserialization=True)
 

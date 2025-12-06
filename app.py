@@ -2,7 +2,7 @@ import os
 import traceback
 import streamlit as st
 from dotenv import load_dotenv
-from langchain_community.embeddings.huggingface import HuggingFaceInferenceAPIEmbeddings
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_groq import ChatGroq
 from langchain.chains import create_retrieval_chain
@@ -38,9 +38,10 @@ st.markdown(
 # تحميل قاعدة FAISS
 @st.cache_resource
 def get_vectorstore():
-    embeddings = HuggingFaceInferenceAPIEmbeddings(
-        api_key=HF_TOKEN,
-        model_name="sentence-transformers/all-MiniLM-L6-v2",
+    embeddings = HuggingFaceEndpointEmbeddings(
+        model="sentence-transformers/all-MiniLM-L6-v2",
+        task="feature-extraction",
+        huggingfacehub_api_token=HF_TOKEN,
     )
     db = FAISS.load_local(DB_FAISS_PATH, embeddings, allow_dangerous_deserialization=True)
     return db
