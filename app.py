@@ -1,4 +1,5 @@
 import os
+import traceback
 import streamlit as st
 from dotenv import load_dotenv
 from langchain_community.embeddings.huggingface import HuggingFaceInferenceAPIEmbeddings
@@ -170,7 +171,8 @@ def main():
                 st.session_state.messages.append({"role": "assistant", "content": answer})
 
             except Exception as e:
-                st.error(f" خطأ: {str(e)}")
+                st.error(f"حدث خطأ داخلي: {repr(e)}")
+                st.code(traceback.format_exc())
 
 if __name__ == "__main__":
     main()
