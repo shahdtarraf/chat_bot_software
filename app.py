@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings.huggingface import HuggingFaceInferenceAPIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_groq import ChatGroq
 from langchain.chains import create_retrieval_chain
@@ -12,6 +12,7 @@ from langchain.prompts import PromptTemplate
 load_dotenv()
 DB_FAISS_PATH = "vectorstore/db_faiss"
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+HF_TOKEN = os.getenv("HF_TOKEN")
 # تعديل RTL للغة العربية
 st.markdown(
     """
@@ -36,8 +37,11 @@ st.markdown(
 # تحميل قاعدة FAISS
 @st.cache_resource
 def get_vectorstore():
-    embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L12-v2")
-    db = FAISS.load_local(DB_FAISS_PATH, embedding, allow_dangerous_deserialization=True)
+    embeddings = HuggingFaceInferenceAPIEmbeddings(
+        api_key=HF_TOKEN,
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+    )
+    db = FAISS.load_local(DB_FAISS_PATH, embeddings, allow_dangerous_deserialization=True)
     return db
 
 # قائمة التحيات
